@@ -1,0 +1,14 @@
+path: faceMask
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['mask_weared_incorrect', 'with_mask', 'without_mask']
+
+roboflow:
+  workspace: data-labeling
+  project: face-mask-detection-euti3
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/data-labeling/face-mask-detection-euti3/dataset/2

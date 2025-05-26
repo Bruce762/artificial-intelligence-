@@ -1,0 +1,13 @@
+train: drink/train/images
+val: drink/valid/images
+test: drink/test/images
+
+nc: 3
+names: ['bou_me', 'peanut', 'red_tea']
+
+roboflow:
+  workspace: hw-gwatr
+  project: 0321-drinks-cjcdb
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/hw-gwatr/0321-drinks-cjcdb/dataset/1

@@ -1,0 +1,7 @@
+
+python train.py --data faceMask/data.yaml --cfg models/yolov5s.yaml --batch-size 16 --device 0 --epoch 10
+
+python detect.py --weight runs/train/exp/weights/best.pt --source people.jpg
+
+python detect.py --weight runs/train/faceMask/weights/best.pt --source people.jpg
+

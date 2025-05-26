@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG 問答系統</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RAG 檢索增強生成問答系統</h1>
+            <p>輸入您的問題，系統將從文檔中檢索相關資訊並生成回答</p>
+        </header>
+
+        <main>
+            <div class="query-section">
+                <textarea id="question" placeholder="請輸入您的問題..."></textarea>
+                <button id="submit-btn">提交問題</button>
+                <div class="loader" id="loader"></div>
+            </div>
+
+            <div class="response-section">
+                <h2>回答</h2>
+                <div id="answer">等待您的提問...</div>
+            </div>
+
+            <div class="info-section">
+                <h2>說明</h2>
+                <p>此系統使用 RAG (Retrieval Augmented Generation) 技術，會檢索 data 目錄下的 TXT 文件內容作為參考資料來回答您的問題。</p>
+                <p>當系統無法從文檔中找到相關資訊時，會告知您無法回答。</p>
+                <p>使用的模型：</p>
+                <ul>
+                    <li>嵌入模型: nomic-embed-text:latest</li>
+                    <li>語言模型: cwchang/llama3-taide-lx-8b-chat-alpha1:latest</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer>
+            <p>基於 LangChain 和 Ollama 構建的 RAG 應用</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html> 
