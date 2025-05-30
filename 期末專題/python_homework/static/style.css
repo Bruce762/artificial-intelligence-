@@ -1,0 +1,133 @@
+body {
+    background-color: #F3D4B7;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.container-fluid {
+    height: calc(100vh - 40px);
+}
+
+.row {
+    height: 100%;
+}
+
+/* 聊天室樣式 */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    border-radius: 10px;
+    background-color: #FEECD8;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(90vh - 80px); /* 減去輸入框的高度 */
+}
+
+.chat-input {
+    display: flex;
+    padding: 20px;
+    background-color: #fff;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    gap: 10px;
+    height: 80px;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.chat-input button {
+    padding: 8px 20px;
+    background-color: #E27844;
+    border-color: #E27844;
+    color: white;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+/* 訊息樣式 */
+.message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.message.user {
+    background-color: #E27844;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.message.bot {
+    background-color: #fff;
+    color: #000;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+/* 日曆樣式 */
+#calendar {
+    height: 90vh;
+    padding: 20px;
+    background-color: #FEECD8;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.fc {
+    height: 100%;
+}
+
+.fc-view-harness {
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.fc-toolbar-title {
+    color: #E27844 !important;
+}
+
+.fc-button-primary {
+    background-color: #E27844 !important;
+    border-color: #E27844 !important;
+}
+
+.fc-event {
+    background-color: #E27844 !important;
+    border-color: #E27844 !important;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px;
+    }
+    
+    .chat-container {
+        margin-bottom: 20px;
+        height: 50vh;
+    }
+    
+    .chat-messages {
+        max-height: calc(50vh - 80px);
+    }
+    
+    #calendar {
+        height: 50vh;
+    }
+} 

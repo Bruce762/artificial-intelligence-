@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學習助手</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 聊天室部分 -->
+            <div class="col-md-4">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- 聊天訊息會在這裡動態添加 -->
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="message-input" class="form-control" placeholder="輸入訊息...">
+                        <button class="btn btn-primary" onclick="sendMessage()">發送</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 日曆部分 -->
+            <div class="col-md-8">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4/dist/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+        // 初始化 Socket.IO
+        const socket = io();
+        let calendar;
+        
+        // 載入歷史聊天記錄
+        async function loadChatHistory() {
+            try {
+                const response = await fetch('/chat_history');
+                const history = await response.json();
+                const messagesDiv = document.getElementById('chat-messages');
+                messagesDiv.innerHTML = ''; // 清空現有內容
+                
+                history.forEach(msg => {
+                    appendMessage(msg.content, msg.role === 'assistant');
+                });
+                
+                // 滾動到最底部
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                console.error('載入聊天記錄失敗:', error);
+            }
+        }
+        
+        // 初始化 FullCalendar
+        document.addEventListener('DOMContentLoaded', function() {
+            // 載入聊天記錄
+            loadChatHistory();
+            
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'zh-tw',
+                events: JSON.parse('{{ events|tojson|safe }}'),
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                eventDidMount: function(info) {
+                    // 添加事件描述作為提示
+                    if (info.event.extendedProps.description) {
+                        info.el.title = info.event.extendedProps.description;
+                    }
+                }
+            });
+            calendar.render();
+
+            // 監聽日曆更新事件
+            socket.on('calendar_update', function(events) {
+                calendar.removeAllEvents();
+                events.forEach(event => {
+                    calendar.addEvent({
+                        title: event.title,
+                        start: event.start_time,
+                        end: event.end_time,
+                        description: event.description,
+                        allDay: false
+                    });
+                });
+            });
+        });
+
+        // 發送訊息
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                socket.emit('send_message', { message: message });
+                appendMessage(message, false);
+                input.value = '';
+            }
+        }
+
+        // 接收訊息
+        socket.on('receive_message', function(data) {
+            appendMessage(data.message, data.is_bot);
+        });
+
+        // 添加訊息到聊天視窗
+        function appendMessage(message, isBot) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+            
+            // 處理可能包含 JSON 的訊息
+            let displayMessage = message;
+            if (isBot) {
+                // 尋找 JSON 陣列的開始位置
+                const jsonStart = message.lastIndexOf('[');
+                if (jsonStart !== -1) {
+                    // 只顯示 JSON 之前的文字內容
+                    displayMessage = message.substring(0, jsonStart).trim();
+                } else {
+                    // 如果沒有找到陣列，也要檢查是否有單個事件的 JSON
+                    const singleJsonStart = message.lastIndexOf('{');
+                    if (singleJsonStart !== -1) {
+                        displayMessage = message.substring(0, singleJsonStart).trim();
+                    }
+                }
+            }
+            
+            messageDiv.textContent = displayMessage;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // 按下 Enter 鍵發送訊息
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html> 
